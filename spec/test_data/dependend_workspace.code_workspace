@@ -1,0 +1,42 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {},
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "build",
+                "type": "shell",
+                "command": "echo Building the project...",
+                "group": {
+                    "kind": "build",
+                    "isDefault": true
+                },
+                "problemMatcher": []
+            },
+            {
+                "label": "lint",
+                "type": "shell",
+                "command": "echo Linting the code...",
+                "group": "test",
+                "problemMatcher": []
+            },
+            {
+                "label": "test",
+                "type": "shell",
+                "command": "echo Running tests...",
+                "dependsOn": ["build", "lint"],
+                "group": "test",
+                "problemMatcher": []
+            }
+        ]
+    },
+    "extensions": {
+        "recommendations": []
+    }
+}
+

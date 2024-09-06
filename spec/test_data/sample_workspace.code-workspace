@@ -1,0 +1,112 @@
+{
+    // Folders included in the workspace
+    folders: [
+        {
+            name: 'type1',
+            path: '/path/to/firstType'
+        },
+        {
+            path: '/path/to/type2'
+        }
+    ],
+
+    // Workspace settings
+    settings: {
+        'editor.tabSize': 4,
+        'files.autoSave': 'off',
+        'C_Cpp.default.configurationProvider': 'ms-vscode.cpptools'
+    },
+
+    // Debug configurations
+    launch: {
+        configurations: [
+            {
+                name: 'Debug Project1',
+                type: 'cppdbg',
+                request: 'launch',
+                program: '${workspaceFolder}/project1/build/${workspaceFolderBasename}',
+                args: [],
+                stopAtEntry: true,
+                cwd: '${workspaceFolder}/project1',
+                environment: [],
+                externalConsole: false,
+                MIMode: 'gdb',
+                miDebuggerPath: '/path/to/gdb',
+                setupCommands: [
+                    {
+                        description: 'Enable pretty-printing for gdb',
+                        text: '-enable-pretty-printing',
+                        ignoreFailures: true
+                    }
+                ],
+                preLaunchTask: 'build project1'
+            },
+			{
+				"name": "debug python",
+				"type": "python",
+				"request": "launch",
+				"console": "integratedTerminal",
+				"cwd" : "${workspaceFolder}/path/to/type2/some_path/",
+				"program": "${workspaceFolder}/path/to/type2/../../folder/script.py",
+				"args" : ["arg1", "arg2"]
+			},
+
+        ],
+        compounds: []
+    },
+
+    // Build tasks
+    tasks: [
+        {
+            label: 'build project1',
+            type: 'shell',
+            command: 'g++',
+            args: [
+                '-g',
+                'src/*.cpp',
+                '-o',
+                'build/${workspaceFolderBasename}'
+            ],
+            group: {
+                kind: 'build',
+                isDefault: true
+            },
+            problemMatcher: ['$gcc'],
+            presentation: {
+                echo: true,
+                reveal: 'always',
+                focus: false,
+                panel: 'shared'
+            },
+            options: {
+                cwd: '${workspaceFolder}/project1'
+            }
+        },
+        {
+            label: 'build project2',
+            type: 'shell',
+            command: 'g++',
+            args: [
+                '-g',
+                'src/*.cpp',
+                '-o',
+                'build/${workspaceFolderBasename}'
+            ],
+            group: {
+                kind: 'build',
+                isDefault: true
+            },
+            problemMatcher: ['$gcc'],
+            presentation: {
+                echo: true,
+                reveal: 'always',
+                focus: false,
+                panel: 'shared'
+            },
+            options: {
+                cwd: '${workspaceFolder}/project2'
+            }
+        }
+    ]
+}
+
