@@ -6,6 +6,24 @@ The plugin enables you to load builds, launch and test configs and integrate the
 
 # Gettings Started
 
+
+
+### Importing a Workspace
+
+To import a workspace, use the following:
+```lua
+local imposter = require('imposter')
+imposter.import_workspace() 
+```
+This command will search upwards from the current working directory (cwd) and prompt the user to select a workspace.
+
+### Running Tests and Builds
+Once a workspace is imported, you can run tests and builds with the following commands:
+```lua
+imposter.build()
+imposter.test()
+```
+
 ## installation 
 
 
@@ -27,7 +45,7 @@ use {
 
  Optional dependencies: 
    
- - [nvim-telescope/telescope.nvim](https://github.com/nvim-telescope/telescope.nvim)
+ - [nvim-telescope/telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) For prettier menus
 
 
 
