@@ -41,6 +41,31 @@ describe("format_config",function()
 
 end)
 
+describe("copy",function()
+	it("copies the table",function()
+		local exp = {test =1, test2='test'}
+		local result = util.copy(exp)
+		assert.same(exp,result)
+	end)
+	it("handles tables",function()
+		local exp = {test =1, test2='test', table={test3=123}}
+		local result = util.copy(exp)
+		assert.same(exp,result)
+	end)
+
+	it("returns a new table",function()
+		local exp = {test =1, test2='test'}
+		local result = util.copy(exp)
+		assert.not_equal(exp,result)
+	end)
+
+	it("also copies deep tables",function()
+		local exp = {test =1, test2='test', table={test3=123}}
+		local result = util.copy(exp)
+		assert.not_equal(exp.table,result.table)
+	end)
+
+end)
 
 
 
