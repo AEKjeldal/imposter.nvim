@@ -1,28 +1,28 @@
 
 
 local buffers		= require("imposter.buffers")
-local constants     = require("workspaceimporter.constants")
-local event_handler = require("workspaceimporter.event_handler")
+local constants     = require("imposter.constants")
+local event_handler = require("imposter.event_handler")
 
-local    util = require("workspaceimporter.util")
+local    util = require("imposter.util")
 
 describe("Create Buffer",function()
 
 	before_each(function()
 		-- Reload to prevent test cross contamonation
-		buffers		  = require("workspaceimporter.buffers")
-        constants	  = require("workspaceimporter.constants")
-        event_handler = require("workspaceimporter.event_handler")
-		util = require("workspaceimporter.util")
+		buffers		  = require("imposter.buffers")
+        constants	  = require("imposter.constants")
+        event_handler = require("imposter.event_handler")
+		util = require("imposter.util")
 	end)
 
 	after_each(function()
 		-- clear to prevent tests cross contamination
 
-		package.loaded['workspaceimporter.constants'] = nil
-		package.loaded['workspaceimporter.buffers'] = nil
-		package.loaded['workspaceimporter.event_handler'] = nil
-		package.loaded['workspaceimporter.util'] = nil
+		package.loaded['imposter.constants'] = nil
+		package.loaded['imposter.buffers'] = nil
+		package.loaded['imposter.event_handler'] = nil
+		package.loaded['imposter.util'] = nil
 	end)
 
 

@@ -9,6 +9,19 @@ end
 
 local M = {}
 
+M.copy = function(table)
+	local result = {}
+	for k,v in pairs(table) do
+		if type(v) == 'table' then
+			result[k] =  M.copy(v)
+		else 
+			result[k] = v
+		end
+	end
+	return result
+end
+
+
 M.setDefault = function(tbl,default_val)
 	local mt = {__index = function(table,key)
 		table[key] = default_val()
@@ -36,14 +49,25 @@ M.filter = function(filter,input)
 	return result
 end
 
+M.root = function()
+	-- place holder for windows migration 
+	return '/'
+end
 
 -- Taken from https://code.visualstudio.com/docs/editor/variables-reference
-local replacements = {workspaceFolder =  vim.fn.getcwd,
+-- local replacements = {workspaceFolder =  vim.fn.getcwd,
+-- 					  file = function() vim.fn.expand('%') end,
+-- 					  workspaceFolderBasename = function()
+-- 												 local p_split = M.split_path(vim.fn.getcwd())
+-- 												 return p_split[#p_split]
+-- 												end   }
+
+local replacements = {workspaceFolder =  function() return M.root()..constants.workspaceFolder end,
 					  file = function() vim.fn.expand('%') end,
-					  workspaceFolderBasename = function()
-												 local p_split = M.split_path(vim.fn.getcwd())
-												 return p_split[#p_split]
-												end   }
+					  workspaceFolderBasename =  function() return M.root()..constants.workspaceFolderBasename end
+										   }
+
+
 
 
 local function format_str(input_str)
@@ -52,8 +76,8 @@ local function format_str(input_str)
 	if m then
 		-- TODO: This should look up the stored variable in constants!
 		-- TODO: make compatible with windows!
-		local replacement = m
-		input_str = string.gsub(input_str,":"..m..'}',"}".."/"..m)
+		local path = constants.folders[m] or m
+		input_str = string.gsub(input_str,":"..m..'}',"}"..path)
 	end
 
 
@@ -69,6 +93,8 @@ local function format_str(input_str)
 
 	return input_str
 end
+
+
 
 M.format_config = function(configuration)
 	local result = {}
