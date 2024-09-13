@@ -32,13 +32,10 @@ M.continue = function()
 		end,
 	}, function(choice)
 
-		vim.notify(vim.inspect(choice))
 		if  not choice then
 			return
 		end
 		local config = utils.format_config(choice)
-		vim.notify(vim.inspect(config))
-
 
 		dap.run(config)
 	end)

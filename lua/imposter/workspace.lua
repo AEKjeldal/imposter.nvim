@@ -47,17 +47,12 @@ local function find_project_root(dir)
 	for _,root in pairs(project_roots) do
 		-- Do not use path split here for windows support!
 		local path_split = util.split_str(root,'/') 
-		local path = util.root()..table.concat(path_split,util.sep(),1,#path_split-1)
+		local path = util.root()..table.concat(path_split,'/',1,#path_split-1)
 
 		table.insert(paths,path)
 	end
 	return get_parent(paths)
 end
-
-
-
-
-
 
 local M = {}
 

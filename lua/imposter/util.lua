@@ -14,7 +14,7 @@ M.copy = function(table)
 	for k,v in pairs(table) do
 		if type(v) == 'table' then
 			result[k] =  M.copy(v)
-		else 
+		else
 			result[k] = v
 		end
 	end
