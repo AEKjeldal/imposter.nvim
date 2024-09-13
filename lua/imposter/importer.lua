@@ -5,11 +5,10 @@ local constants = require('imposter.constants')
 local M = {}
 
 local function set_workspaceFolder(path)
-	local path_split = util.split_str(path,'/')
+	local path_split = util.split_str(path,util.sep())
 
 	constants.workspaceFolder = table.concat(path_split,"/",1,#path_split-1)..'/'
 	constants.workspaceFolderBasename = path_split[#path_split-1]
-
 
 end
 
@@ -23,7 +22,7 @@ local function import_folders(paths)
 			local name = elem.name
 
 			if not name then
-				local splpath = util.split_path(path)
+				local splpath = util.split_str(path,'/')
 				name = splpath[#splpath]
 			end
 			table.insert(constants.paths,path)

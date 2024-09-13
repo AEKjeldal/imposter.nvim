@@ -14,7 +14,7 @@ M.copy = function(table)
 	for k,v in pairs(table) do
 		if type(v) == 'table' then
 			result[k] =  M.copy(v)
-		else 
+		else
 			result[k] = v
 		end
 	end
@@ -50,8 +50,12 @@ M.filter = function(filter,input)
 end
 
 M.root = function()
-	-- place holder for windows migration 
-	return '/'
+	if os.getenv('OS') == 'Windows_NT' then
+		-- Temp workaround for now
+		return ''
+	else
+		return '/'
+	end
 end
 
 -- Taken from https://code.visualstudio.com/docs/editor/variables-reference
