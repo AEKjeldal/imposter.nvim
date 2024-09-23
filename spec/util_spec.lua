@@ -1,6 +1,6 @@
 
 local util = require('imposter.util')
-local test_data = require("spec.test_data.shared_data")
+local constants = require('imposter.constants')
 
 
 describe("split_str splits using seperator",function()
@@ -14,19 +14,29 @@ end)
 
 
 describe("format_config",function()
+	before_each(function()
+		-- Reload to prevent test cross contamonation
+		package.loaded['imposter.constants'] = nil
+		package.loaded['imposter.util'] = nil
+		util		= require("imposter.util")
+        constants	= require("imposter.constants")
+	end)
 	it("formats ${workspaceFolder} as dir",function()
 
-		local exp   = {test_dir = vim.fn['getcwd']() }
+		local exp   = {test_dir = '/testDir123/test' }
+		constants.workspaceFolder = 'testDir123/test'
 		local data = util.format_config({test_dir = "${workspaceFolder}"})
-		assert.same(data,exp)
+		assert.same(exp,data)
 	end)
 
-	it("formats ${workspaceFolderBase} as working dir",function()
+	it("formats ${workspaceFolderBase} as constants.workspaceFolderBasename",function()
 
-		local exp   = { test_dir = 'imposter.nvim' }
+		local exp   = { test_dir = '/testDir123' }
+		constants.workspaceFolderBasename = 'testDir123'
+
 		local data = util.format_config({test_dir = "${workspaceFolderBasename}"})
 		-- working as intended
-		assert.same(data,exp)
+		assert.same(exp,data)
 	end)
 
 

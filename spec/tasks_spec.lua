@@ -81,7 +81,7 @@ describe("run_task",function()
 		vim.fn.termopen = termopen
 
 
-		assert.equals(4,calls)
+		assert.equals(4,args)
 
 
 	end)
