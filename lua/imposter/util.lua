@@ -65,10 +65,14 @@ end
 -- 												 local p_split = M.split_path(vim.fn.getcwd())
 -- 												 return p_split[#p_split]
 -- 												end   }
+-- local replacements = {workspaceFolder =  function() return M.root()..constants.workspaceFolder end,
+-- 					  file = function() vim.fn.expand('%') end,
+-- 					  workspaceFolderBasename =  function() return M.root()..constants.workspaceFolderBasename end
+-- 										   }
 
-local replacements = {workspaceFolder =  function() return M.root()..constants.workspaceFolder end,
+local replacements = {workspaceFolder =  function() return constants.workspaceFolder end,
 					  file = function() vim.fn.expand('%') end,
-					  workspaceFolderBasename =  function() return M.root()..constants.workspaceFolderBasename end
+					  workspaceFolderBasename =  function() return constants.workspaceFolderBasename end
 										   }
 
 
@@ -81,7 +85,7 @@ local function format_str(input_str)
 		-- TODO: This should look up the stored variable in constants!
 		-- TODO: make compatible with windows!
 		local path = constants.folders[m] or m
-		input_str = string.gsub(input_str,":"..m..'}',"}"..path)
+		input_str = string.gsub(input_str,":"..m..'}',"}/"..path)
 	end
 
 

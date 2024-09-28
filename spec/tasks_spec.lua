@@ -11,10 +11,15 @@ local buffers   = require("imposter.buffers")
 describe("run_task",function()
 	local termopen = vim.fn.termopen
 	before_each(function()
+		package.loaded['imposter.constants'] = nil
+		package.loaded['imposter.tasks'] = nil
+		package.loaded['imposter.buffers'] = nil
+		package.loaded['imposter.util'] = nil
+
 		tasks = require("imposter.tasks")
 		constants = require("imposter.constants")
 		buffers = require("imposter.buffers")
-
+		utils = require("imposter.util")
 	end)
 
 	after_each(function()
@@ -25,6 +30,7 @@ describe("run_task",function()
 		package.loaded['imposter.constants'] = nil
 		package.loaded['imposter.tasks'] = nil
 		package.loaded['imposter.buffers'] = nil
+		package.loaded['imposter.util'] = nil
 
 	end)
 
@@ -61,8 +67,13 @@ describe("run_task",function()
 	it("handles compound tasks",function()
 
 		constants.tasks = utils.format_config(test_data.dependend_tasks)
-		-- monkey patching as mock does not work here!
+		-- monkey patching, 
+		-- preferaby find a way to do this slightly more elegant
+		--
 		local termopen = vim.fn.termopen
+		-- local create_buf = buffers.create_buffer
+
+		buffers.create_buffer = function() return vim.api.nvim_create_buf(false,true) end
 
 		local calls = 0
 		local args = {}
@@ -71,7 +82,7 @@ describe("run_task",function()
 			local _,opts = ...
 			calls = calls +1
 			table.insert(args,{...})
-			opts.on_exit(0,0)
+			opts.on_exit(1,0)
 		end
 
 		local taskname = 'build-and-test'
@@ -80,17 +91,20 @@ describe("run_task",function()
 
 		vim.fn.termopen = termopen
 
+		-- buffers.create_buffer = create_buf
 
 		assert.equals(4,calls)
 
 
 	end)
 
-	it("supplies cwd if supplied", function()
+	it("supplies cwd if a working dir is supplied", function()
 
+		constants.workspaceFolder = vim.fn.getcwd()
 		local exp  = vim.fn['getcwd']() .. "/project2"
 
-		constants.tasks = utils.format_config(test_data.sample_task)
+
+		constants.tasks = test_data.sample_task
 
 		-- monkey patching as mock does not work here!
 		local termopen = vim.fn.termopen

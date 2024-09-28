@@ -1,0 +1,36 @@
+name: RunTests
+
+on: [push, pull_request]
+
+jobs:
+  unit_tests:
+    name: run unit tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04]
+        rev: [nightly, v0.10.0]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: ${{ matrix.rev }}
+
+      - name: Setup
+        run: |
+          git clone --depth 1 https://github.com/nvim-lua/plenary.nvim ../plenary.nvim
+          echo "Installing Dependenciy: Json5"
+          git clone --depth 1 https://github.com/Joakker/lua-json5 ../json5.nvim
+          (cd ../json5.nvim && ./install.sh && echo "Succesfully Installed JSON5")
+
+      - name: Run tests
+        run: |
+          make test
+
