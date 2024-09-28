@@ -23,7 +23,7 @@ describe("format_config",function()
 	end)
 	it("formats ${workspaceFolder} as dir",function()
 
-		local exp   = {test_dir = '/testDir123/test' }
+		local exp   = {test_dir =   'testDir123/test' }
 		constants.workspaceFolder = 'testDir123/test'
 		local data = util.format_config({test_dir = "${workspaceFolder}"})
 		assert.same(exp,data)
@@ -31,12 +31,35 @@ describe("format_config",function()
 
 	it("formats ${workspaceFolderBase} as constants.workspaceFolderBasename",function()
 
-		local exp   = { test_dir = '/testDir123' }
+		local exp   = { test_dir = 'testDir123' }
 		constants.workspaceFolderBasename = 'testDir123'
 
 		local data = util.format_config({test_dir = "${workspaceFolderBasename}"})
 		-- working as intended
 		assert.same(exp,data)
+	end)
+
+
+	it("handles paths",function()
+
+		local exp   = { test_dir = vim.fn.getcwd()..'/testDir123/test_dir' }
+		constants.workspaceFolder = vim.fn.getcwd()..'/testDir123'
+
+		constants.folders={test="test_dir"}
+
+		local data = util.format_config({test_dir = "${workspaceFolder:test}"})
+		-- working as intended
+		assert.same(exp,data)
+
+
+		-- local exp   = { test_dir = vim.fn.getcwd()..'/testDir123/test_dir' }
+		-- constants.workspaceFolderBasename = 'testDir123'
+		-- constants.folders={test="test_dir"}
+		--
+		-- local data = util.format_config({test_dir = "${workspaceFolderBasename:test}"})
+		-- -- working as intended
+		-- assert.same(exp,data)
+
 	end)
 
 

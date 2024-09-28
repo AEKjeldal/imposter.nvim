@@ -40,7 +40,10 @@ end
 
 local function format_task (task)
 
+
 	task = util.format_config(task)
+
+
 	local task_type = get_task_type(task)
 	local options = task.options or {}
 	-- this fails of options is empty
@@ -117,12 +120,11 @@ local function empty_task_queue(queue)
 		local task = M.get_task(taskLabel)[1]
 
 		local bufType = get_task_type(task)
-		local bufNo = buffers.create_buffer(bufType)
+		local bufNo   = buffers.create_buffer(bufType)
 
 		local command, opts = format_task(task)
 
 		opts.on_exit = function(a,b,c)
-
 			if b ~= 0 then
 				--error Detected!
 				vim.notify('Task: '..taskLabel..' Failed With ExitCode: '..vim.inspect(b))

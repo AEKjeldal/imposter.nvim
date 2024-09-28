@@ -32,7 +32,5 @@ jobs:
 
       - name: Run tests
         run: |
-          echo "Running Tests"
           make test
-          echo "All Tests PASSED!"
 

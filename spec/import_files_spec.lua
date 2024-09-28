@@ -18,7 +18,7 @@ describe("Imports code-workspace folders",function()
 	it('sets workspaceFolder',function()
 		imposter.import_workspace(test_file)
 
-		local exp = 'spec/test_data/'
+		local exp = vim.fn.getcwd()..'/spec/test_data'
 		assert.is_equal(exp,constants.workspaceFolder)
 	end)
 
