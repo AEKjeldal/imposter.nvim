@@ -39,8 +39,7 @@ describe("format_config",function()
 		assert.same(exp,data)
 	end)
 
-
-	it("handles paths",function()
+	it("formats workspaceFolder with paths",function()
 
 		local exp   = { test_dir = vim.fn.getcwd()..'/testDir123/test_dir' }
 		constants.workspaceFolder = vim.fn.getcwd()..'/testDir123'
@@ -48,18 +47,20 @@ describe("format_config",function()
 		constants.folders={test="test_dir"}
 
 		local data = util.format_config({test_dir = "${workspaceFolder:test}"})
-		-- working as intended
 		assert.same(exp,data)
 
+	end)
 
-		-- local exp   = { test_dir = vim.fn.getcwd()..'/testDir123/test_dir' }
-		-- constants.workspaceFolderBasename = 'testDir123'
-		-- constants.folders={test="test_dir"}
-		--
-		-- local data = util.format_config({test_dir = "${workspaceFolderBasename:test}"})
-		-- -- working as intended
-		-- assert.same(exp,data)
+	it("formats workspaceFolderBasename with paths",function()
 
+		local exp   = { test_dir = 'Basename/test_dir' }
+		constants.workspaceFolder = vim.fn.getcwd()..'/Basename'
+		constants.workspaceFolderBasename = 'Basename'
+
+		constants.folders={test="test_dir"}
+
+		local data = util.format_config({test_dir = "${workspaceFolderBasename:test}"})
+		assert.same(exp,data)
 	end)
 
 
@@ -67,6 +68,14 @@ describe("format_config",function()
 
 		local exp   = { test_file = vim.fn.expand('%') }
 		local data = util.format_config({test_file = "${file}"})
+		-- working as intended
+		assert.same(data,exp)
+	end)
+
+	it("formats ${userHome} as open userHome",function()
+
+		local exp   = { test_file = vim.fn.expand('~/')}
+		local data = util.format_config({test_file = "${userHome}"})
 		-- working as intended
 		assert.same(data,exp)
 	end)

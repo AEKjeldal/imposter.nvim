@@ -59,19 +59,16 @@ M.root = function()
 end
 
 -- Taken from https://code.visualstudio.com/docs/editor/variables-reference
--- local replacements = {workspaceFolder =  vim.fn.getcwd,
--- 					  file = function() vim.fn.expand('%') end,
--- 					  workspaceFolderBasename = function()
--- 												 local p_split = M.split_path(vim.fn.getcwd())
--- 												 return p_split[#p_split]
--- 												end   }
--- local replacements = {workspaceFolder =  function() return M.root()..constants.workspaceFolder end,
--- 					  file = function() vim.fn.expand('%') end,
--- 					  workspaceFolderBasename =  function() return M.root()..constants.workspaceFolderBasename end
--- 										   }
-
 local replacements = {workspaceFolder =  function() return constants.workspaceFolder end,
-					  file = function() vim.fn.expand('%') end,
+					  file = function() return vim.fn.expand('%') end,
+					  fileBasename = function() return vim.fn.expand('%:p:t') end,
+					  fileExtname = function() return '.'..vim.fn.expand('%:e') end,
+					  fileDirname = function() return vim.fn.expand('%:p:h') end,
+					  fileBasenameNoExtension = function() return vim.fn.expand('%:t:r') end,
+					  pathSeperator = function() return M.sep() end,
+					  userHome = function() return vim.fn.expand('~/') end,
+					  ['/'] = function() return M.sep() end,
+					  cwd = function() return vim.fn.getcwd end,
 					  workspaceFolderBasename =  function() return constants.workspaceFolderBasename end
 										   }
 
@@ -79,25 +76,21 @@ local replacements = {workspaceFolder =  function() return constants.workspaceFo
 
 
 local function format_str(input_str)
-	local m = string.match(input_str,'${workspaceFolder:([%w_%d]+)}')
-	--
-	if m then
-		-- TODO: This should look up the stored variable in constants!
-		-- TODO: make compatible with windows!
-		local path = constants.folders[m] or m
-		input_str = string.gsub(input_str,":"..m..'}',"}/"..path)
-	end
-
-
-	-- TODO Expand this to all variable referenes
-	-- TODO This does not properly find variable references in the middle of strings
-	local re = vim.regex("\\${\\(workspaceFolder\\|workspaceFolderBasename\\|file\\)}")
+	-- local re = vim.regex("\\${\\(workspaceFolder\\|workspaceFolderBasename\\|file\\|userHome\\)\\(:\\w\\+\\)*}")
+	local re = vim.regex("\\${\\(\\w\\+\\)\\(:\\w\\+\\)*}")
 	local st,en = re:match_str(input_str)
+
 	if st then
 		local match = string.sub(input_str,st+3,en-1)
-		local replacement = replacements[match]() or  ''
-		input_str = string.gsub(input_str,'${'..match..'}',replacement)
+		local parts = M.split_str(match,':')
+		local replacement = replacements[parts[1]]()
+
+		if #parts > 1 then
+			replacement = replacement..'/'..(constants.folders[parts[2]] or  '')
+		end
+		input_str = string.gsub(input_str, string.sub(input_str,st,en) ,replacement)
 	end
+
 
 	return input_str
 end
