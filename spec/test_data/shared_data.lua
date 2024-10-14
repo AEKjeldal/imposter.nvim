@@ -35,7 +35,32 @@ M.dependend_tasks = {
 	}
 }
 
-
+M.os_task = {
+        {
+            label= 'OsTask',
+            type= 'shell',
+            command= 'echo',
+            args= {
+                'Unknown'
+            },
+			linux={args={'Linux'}},
+			windows={args={'Windows'}},
+            group= {
+                kind= 'build',
+                isDefault= true
+            },
+            problemMatcher= {'$gcc'},
+            presentation= {
+                echo= true,
+                reveal= 'always',
+                focus= false,
+                panel= 'shared'
+            },
+            options= {
+                cwd= '${workspaceFolder}/project1'
+            }
+        }
+}
 
 M.sample_task =  {
         {

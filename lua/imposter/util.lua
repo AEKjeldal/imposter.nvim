@@ -7,7 +7,55 @@ local function load_file(filename)
 end
 
 
+
+
+
+-- Taken from https://code.visualstudio.com/docs/editor/variables-reference
+local replacements = {workspaceFolder =  function() return constants.workspaceFolder end,
+					  file = function() return vim.fn.expand('%') end,
+					  fileBasename = function() return vim.fn.expand('%:p:t') end,
+					  fileExtname = function() return '.'..vim.fn.expand('%:e') end,
+					  fileDirname = function() return vim.fn.expand('%:p:h') end,
+					  fileBasenameNoExtension = function() return vim.fn.expand('%:t:r') end,
+					  pathSeperator = function() return M.sep() end,
+					  userHome = function() return vim.fn.expand('~/') end,
+					  ['/'] = function() return M.sep() end,
+					  cwd = function() return vim.fn.getcwd end,
+					  workspaceFolderBasename =  function() return constants.workspaceFolderBasename end
+										   }
+
 local M = {}
+
+M.update =function(table,replacements)
+	for k,v in pairs(replacements) do
+		table[k] = v
+	end
+end
+
+
+M.os = function()
+	local sysname = vim.loop.os_uname().sysname
+
+	if sysname == 'Linux' then
+		return 'linux'
+	elseif sysname == osx then
+		return 'osx'
+	elseif 'Windows_NT' then
+		return 'windows'
+	end
+
+	error('Unsupported os: '..sysname)
+end
+
+
+M.pop =function(tbl,pos)
+	pos = pos or 1
+
+	local data = tbl[pos]
+	table.remove(tbl,pos)
+	return data
+
+end
 
 M.copy = function(table)
 	local result = {}
@@ -24,7 +72,7 @@ end
 
 M.setDefault = function(tbl,default_val)
 	local mt = {__index = function(table,key)
-		table[key] = default_val()
+		table[key] = default_val(key)
 		return table[key] end}
 	setmetatable(tbl,mt)
 	return tbl
@@ -58,23 +106,6 @@ M.root = function()
 	end
 end
 
--- Taken from https://code.visualstudio.com/docs/editor/variables-reference
-local replacements = {workspaceFolder =  function() return constants.workspaceFolder end,
-					  file = function() return vim.fn.expand('%') end,
-					  fileBasename = function() return vim.fn.expand('%:p:t') end,
-					  fileExtname = function() return '.'..vim.fn.expand('%:e') end,
-					  fileDirname = function() return vim.fn.expand('%:p:h') end,
-					  fileBasenameNoExtension = function() return vim.fn.expand('%:t:r') end,
-					  pathSeperator = function() return M.sep() end,
-					  userHome = function() return vim.fn.expand('~/') end,
-					  ['/'] = function() return M.sep() end,
-					  cwd = function() return vim.fn.getcwd end,
-					  workspaceFolderBasename =  function() return constants.workspaceFolderBasename end
-										   }
-
-
-
-
 local function format_str(input_str)
 	-- local re = vim.regex("\\${\\(workspaceFolder\\|workspaceFolderBasename\\|file\\|userHome\\)\\(:\\w\\+\\)*}")
 	local re = vim.regex("\\${\\(\\w\\+\\)\\(:\\w\\+\\)*}")
@@ -95,8 +126,6 @@ local function format_str(input_str)
 	return input_str
 end
 
-
-
 M.format_config = function(configuration)
 	local result = {}
 	for idx,conf in pairs(configuration) do
@@ -112,7 +141,7 @@ M.format_config = function(configuration)
 end
 
 M.split_str = function(input,sep)
-	result = {}
+	local result = {}
 	for str in string.gmatch(input,'[^'..sep..']+') do
 		table.insert(result,str)
 	end
@@ -137,4 +166,10 @@ M.json_parse = function(filename)
 end
 
 
+M.setDefault(replacements,function(replacement) error('Replacement: '..vim.inspect(replacement)..' did not resolve to any replacement')  end)
+
+
 return M
+
+
+
