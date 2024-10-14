@@ -2,9 +2,13 @@ local M = {}
 
 local importer  = require('imposter.importer')
 local workspace = require('imposter.workspace')
-local tasks    = require('imposter.tasks')
-local ui	   = require('imposter.ui')
+local tasks     = require('imposter.tasks')
+local ui	    = require('imposter.ui')
+local constants = require('imposter.ui')
 
+M.setup = function(opts)
+	opts.constants = constants.set_defaults(opts)
+end
 M.import_workspace = importer.import_workspace
 
 M.run_task    = tasks.run_task
