@@ -69,7 +69,6 @@ describe("run_task",function()
 		constants.tasks = utils.format_config(test_data.dependend_tasks)
 		-- monkey patching, 
 		-- preferaby find a way to do this slightly more elegant
-		--
 		local termopen = vim.fn.termopen
 		-- local create_buf = buffers.create_buffer
 
@@ -90,11 +89,80 @@ describe("run_task",function()
 		tasks.run_task(taskname)
 
 		vim.fn.termopen = termopen
-
 		-- buffers.create_buffer = create_buf
 
 		assert.equals(4,calls)
+	end)
 
+	it("Priorities Linux Specific settings",function() 
+
+		-- monkeypatches
+		local sysname  = vim.loop.os_uname
+		local termopen = vim.fn.termopen
+		local exp = {'echo','Linux' }
+
+		vim.loop.os_uname = function()
+			return { sysname = 'Linux' }
+		end
+
+		constants.tasks = test_data.os_task
+		local taskname = 'OsTask'
+
+		local calls = 0
+		local args = {}
+
+		vim.fn.termopen = function(...)
+			local _,opts = ...
+			calls = calls +1
+			table.insert(args,{...})
+			opts.on_exit(1,0)
+		end
+
+		tasks.run_task(taskname)
+
+
+
+		-- put them back
+		vim.fn.termopen   = termopen
+		vim.loop.os_uname = sysname
+
+		assert.are.same(exp,args[1][1])
+
+	end)
+
+	it("Priorities Windows Specific settings",function() 
+
+		-- monkeypatches
+		local sysname  = vim.loop.os_uname
+		local termopen = vim.fn.termopen
+		local exp = {'echo','Windows' }
+
+		vim.loop.os_uname = function()
+			return { sysname = 'Windows_NT' }
+		end
+
+		constants.tasks = test_data.os_task
+		local taskname = 'OsTask'
+
+		local calls = 0
+		local args = {}
+
+		vim.fn.termopen = function(...)
+			local _,opts = ...
+			calls = calls +1
+			table.insert(args,{...})
+			opts.on_exit(1,0)
+		end
+
+		tasks.run_task(taskname)
+
+
+
+		-- put them back
+		vim.fn.termopen   = termopen
+		vim.loop.os_uname = sysname
+
+		assert.are.same(exp,args[1][1])
 
 	end)
 

@@ -40,8 +40,11 @@ end
 
 local function format_task (task)
 
+	local os_settings = task[util.os()] or {}
 
 	task = util.format_config(task)
+
+	util.update(task,os_settings)
 
 
 	local task_type = get_task_type(task)
@@ -82,14 +85,6 @@ end
 
 
 --todo: this should be in utils
-local function pop(tbl,pos)
-	pos = pos or 1
-
-	local data = tbl[pos]
-	table.remove(tbl,pos)
-	return data
-
-end
 
 local function compose_task_queue(taskName,queue)
 	queue = queue or {}
@@ -114,8 +109,7 @@ local function empty_task_queue(queue)
 
 	if not (next(queue) == nil) then
 
-
-		local taskLabel = pop(queue)
+		local taskLabel = util.pop(queue)
 
 		local task = M.get_task(taskLabel)[1]
 

@@ -21,6 +21,7 @@ describe("format_config",function()
 		util		= require("imposter.util")
         constants	= require("imposter.constants")
 	end)
+
 	it("formats ${workspaceFolder} as dir",function()
 
 		local exp   = {test_dir =   'testDir123/test' }
