@@ -168,8 +168,4 @@ end
 
 M.setDefault(replacements,function(replacement) error('Replacement: '..vim.inspect(replacement)..' did not resolve to any replacement')  end)
 
-
 return M
-
-
-

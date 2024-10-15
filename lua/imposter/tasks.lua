@@ -202,7 +202,7 @@ M.run_test = function(opts)
 									last_run.test = label
 									M.run_task(label)
 								 end,
-					 data = util.filter(test_filter, constants.tasks),
+					 data = util.filter(test_filter, constants.tasks) or {},
 					 display = 'label' }
 
 	event_handler.emit_buffer_event(event_handler.bufferEvents.SelectBox,content)
@@ -226,7 +226,7 @@ M.run_build = function(opts)
 									last_run.build = task_label
 									M.run_task(task_label)
 								end,
-					 data = util.filter(build_filter, constants.tasks),
+					 data = util.filter(build_filter, constants.tasks) or {},
 					 display = 'label' }
 
 	event_handler.emit_buffer_event(event_handler.bufferEvents.SelectBox,content)
