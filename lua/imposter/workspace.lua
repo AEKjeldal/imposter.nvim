@@ -1,11 +1,9 @@
 local plenary   = require('plenary')
 
-
 local util = require("imposter.util")
 local constants = require("imposter.constants")
 local event_handler = require("imposter.event_handler")
 local importer = require('imposter.importer')
-
 
 local function is_task_file(file)
 	local file_extentions = constants.file_importers
@@ -16,7 +14,6 @@ local function is_task_file(file)
 	end
 	return false
 end
-
 
 
 local function find_workspaceFiles(dir)
@@ -32,7 +29,6 @@ local function find_workspaceFiles(dir)
 end
 
 
-
 local function get_parent(paths)
 	local result = nil
 	local max_depth = 1000
@@ -45,7 +41,6 @@ local function get_parent(paths)
 	end
 	return result
 end
-
 
 local function find_project_root(dir)
 
@@ -94,7 +89,5 @@ M.LoadWorkspace = function(base_path)
 	event_handler.emit_buffer_event(event_handler.bufferEvents.SelectBox ,data)
 
 end
-
-
 
 return M

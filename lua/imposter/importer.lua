@@ -1,14 +1,6 @@
 local util = require('imposter.util')
 local constants = require('imposter.constants')
 
-
-
-
-
-
-
-
-
 local M = {}
 
 local function set_workspaceFolder(path)

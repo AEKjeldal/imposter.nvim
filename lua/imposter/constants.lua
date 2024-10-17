@@ -6,6 +6,9 @@ M.file_importers = {} -- defaults are added in importer.lua
 
 M.buffers = {}
 
+M.builtin_tasks = {}
+M.builtin_launch_configs = {}
+
 M.tasks = {}
 
 M.workspaceFolder = ""
@@ -15,10 +18,5 @@ M.launch_config = {} -- table containing specific launch configs
 
 M.folders = {}  -- accessed as a key value pair ie: name -> path
 M.paths = {}   -- folder containing all paths 
-
-
-M.set_defaults = function(opts)
-	M.root_indicators = opts.root_indicators or M.root_indicators
-end
 
 return M

@@ -7,18 +7,17 @@ local last_run = {}
 
 
 local function test_filter(task)
-		return (task.group == "test" or task.group.kind=="test")
+	return (task.group == "test" or task.group.kind=="test")
 end
 
 local function build_filter(task)
-		return (task.group == "build" or task.group.kind=="build")
+	return (task.group == "build" or task.group.kind=="build")
 end
 
 
 local M = {}
 
 local function get_task_type(task)
-
 	if type(task.group) == 'table' then
 		return task.group.kind
 	end
@@ -105,8 +104,6 @@ local function compose_task_queue(taskName,queue)
 end
 
 local function empty_task_queue(queue)
-
-
 	if not (next(queue) == nil) then
 
 		local taskLabel = util.pop(queue)
@@ -118,10 +115,9 @@ local function empty_task_queue(queue)
 
 		local command, opts = format_task(task)
 
-		opts.on_exit = function(a,b,c)
-			if b ~= 0 then
-				--error Detected!
-				vim.notify('Task: '..taskLabel..' Failed With ExitCode: '..vim.inspect(b))
+		opts.on_exit = function(_,retVal,_)
+			if retVal ~= 0 then
+				vim.notify('Task: '..taskLabel..' Failed With ExitCode: '..vim.inspect(retVal))
 			else
 				local resp, result = pcall(function() empty_task_queue(queue) end)
 				if not resp then
@@ -138,11 +134,11 @@ local function empty_task_queue(queue)
 		local t = { type=get_task_type(task) ,
 		            presentation = task.presentation }
 
-		local handle = vim.api.nvim_buf_call(bufNo , run_in_term(command,opts))
-
 		if t.presentation then
  			event_handler.emit_buffer_event(event_handler.bufferEvents.BufferShow,t)
 		end
+
+		local handle = vim.api.nvim_buf_call(bufNo , run_in_term(command,opts))
 		return handle
 
 	end
@@ -150,7 +146,6 @@ end
 
 
 M.run_task = function(taskLabel)
-
 	local task_queue = compose_task_queue(taskLabel)
 
 	if task_queue then
@@ -159,12 +154,13 @@ M.run_task = function(taskLabel)
 end
 
 M.get_task = function(task_label)
-
 	local filter = function(x)
 		return x.label == task_label
 	end
 
-	return util.filter(filter,constants.tasks)
+	local tasks = util.copy(constants.builtin_tasks)
+	util.update(tasks,constants.tasks)
+	return util.filter(filter,tasks)
 
 end
 
@@ -183,7 +179,7 @@ M.get_builds = function(build_label)
 		return (is_test and x.label == build_label)
 	end
 
-	return util.filter(filter,constants.tasks)
+	return util.filter(filter,tasks)
 end
 
 M.run_test = function(opts)
@@ -197,12 +193,16 @@ M.run_test = function(opts)
 		return M.run_task(opts.test_label)
 	end
 
+	-- This should be handled elsewhere!
+	local tasks = util.copy(constants.builtin_tasks)
+	util.update(tasks,constants.tasks)
+
 	local content = {on_select = function(tbl)
 									local label = tbl[1].label
 									last_run.test = label
 									M.run_task(label)
 								 end,
-					 data = util.filter(test_filter, constants.tasks) or {},
+					 data = util.filter(test_filter, tasks) or {},
 					 display = 'label' }
 
 	event_handler.emit_buffer_event(event_handler.bufferEvents.SelectBox,content)
@@ -210,7 +210,6 @@ end
 
 
 M.run_build = function(opts)
-	-- opts=opts or {}
 
 	if (opts.rerun and last_run.build) then
 		opts.build_label = opts.build_label or last_run.build
@@ -220,19 +219,19 @@ M.run_build = function(opts)
 		return M.run_task(opts.build_label)
 	end
 
+	-- This should be handled elsewhere!
+	local tasks = util.copy(constants.builtin_tasks)
+	util.update(tasks,constants.tasks)
 
 	local content = {on_select = function(tbl)
 									local task_label = tbl[1].label
 									last_run.build = task_label
 									M.run_task(task_label)
 								end,
-					 data = util.filter(build_filter, constants.tasks) or {},
+					 data = util.filter(build_filter, tasks) or {},
 					 display = 'label' }
-
 	event_handler.emit_buffer_event(event_handler.bufferEvents.SelectBox,content)
 end
-
-
 
 event_handler.subscribe_buffer_event(event_handler.bufferEvents.RequestBuffer,
 		function(request)
