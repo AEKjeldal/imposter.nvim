@@ -174,6 +174,10 @@ M.get_tests = function(test_label)
 end
 
 M.get_builds = function(build_label)
+
+	local tasks = util.copy(constants.builtin_tasks)
+	util.update(tasks,constants.tasks)
+
 	local filter = function(x)
 		local is_test = (x.group == "build" or x.group.kind=="build")
 		return (is_test and x.label == build_label)
