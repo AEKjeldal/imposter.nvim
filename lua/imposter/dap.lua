@@ -1,7 +1,8 @@
-local constants = require('imposter.constants')
-local utils		= require('imposter.util')
+local constants     = require('imposter.constants')
+local utils		    = require('imposter.util')
 
-local dap		= require('dap')
+local dap		    = require('dap')
+local event_handler = require('imposter.event_handler')
 
 
 
@@ -21,24 +22,17 @@ local M = {}
 M.continue = function()
 
 	local selection = {}
-
 	local configurations = get_configurations()
 
-
-	vim.ui.select(configurations, {
-		prompt = 'Select conf:',
-		format_item = function(conf)
-			return  vim.inspect(conf['name'])
-		end,
-	}, function(choice)
-
-		if  not choice then
-			return
-		end
+	local content = { on_select = function(tbl)
+		local choice = tbl[1]
 		local config = utils.format_config(choice)
-
 		dap.run(config)
-	end)
+	end,
+	data = configurations or {},
+	display = 'name' }
+
+	event_handler.emit_buffer_event(event_handler.bufferEvents.SelectBox,content)
 
 end
 

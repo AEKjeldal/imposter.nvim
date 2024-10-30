@@ -26,6 +26,13 @@ local replacements = {workspaceFolder =  function() return constants.workspaceFo
 
 local M = {}
 
+M.set_defaults = function(opts)
+	M.update(constants.root_indicators,opts.root_indicators or {})
+	M.update(constants.builtin_tasks,opts.tasks or {})
+	M.update(constants.builtin_launch_configs,opts.launch_configs or {})
+end
+
+
 M.update =function(table,replacements)
 	for k,v in pairs(replacements) do
 		table[k] = v
@@ -168,8 +175,4 @@ end
 
 M.setDefault(replacements,function(replacement) error('Replacement: '..vim.inspect(replacement)..' did not resolve to any replacement')  end)
 
-
 return M
-
-
-

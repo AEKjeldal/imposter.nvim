@@ -1,24 +1,32 @@
 local plenary   = require('plenary')
 
-
 local util = require("imposter.util")
 local constants = require("imposter.constants")
 local event_handler = require("imposter.event_handler")
 local importer = require('imposter.importer')
+
+local function is_task_file(file)
+	local file_extentions = constants.file_importers
+	for extention,_ in pairs(file_extentions) do
+		if string.find(file,extention) then
+			return true
+		end
+	end
+	return false
+end
 
 
 local function find_workspaceFiles(dir)
 	-- local files = plenary.scandir.scan_dir(dir..'/**/*.code-workspace', {depth=5})
 	local files = plenary.scandir.scan_dir(dir, {depth=10})
 	local result = {}
-	for _,file in pairs(files) do 
-		if string.find(file,"code%-workspace") then
+	for _,file in pairs(files) do
+		if is_task_file(file) then
 			table.insert(result,file)
 		end
 	end
 	return result
 end
-
 
 
 local function get_parent(paths)
@@ -33,7 +41,6 @@ local function get_parent(paths)
 	end
 	return result
 end
-
 
 local function find_project_root(dir)
 
@@ -82,7 +89,5 @@ M.LoadWorkspace = function(base_path)
 	event_handler.emit_buffer_event(event_handler.bufferEvents.SelectBox ,data)
 
 end
-
-
 
 return M

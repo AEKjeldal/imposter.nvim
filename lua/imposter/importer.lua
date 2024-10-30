@@ -1,7 +1,6 @@
 local util = require('imposter.util')
 local constants = require('imposter.constants')
 
-
 local M = {}
 
 local function set_workspaceFolder(path)
@@ -43,7 +42,37 @@ local function import_tasks(tasks)
 end
 
 
+local function is_task_file(file)
+	local file_extentions = constants.file_importers
+	for extention,_ in pairs(file_extentions) do
+		if string.find(file,extention) then
+			return true
+		end
+	end
+	return false
+end
+
 M.import_workspace = function(path)
+	for extention,imp_func in pairs(constants.file_importers) do
+		if string.find(path,extention) then
+			imp_func(path)
+			return
+		end
+	end
+	
+	
+	-- set_workspaceFolder(path)
+	--
+	-- local workspace = util.json_parse(path)
+	--
+	-- import_folders(workspace.folders)
+	-- import_launch_config(workspace.launch)
+	-- import_tasks(workspace.tasks)
+end
+
+
+
+constants.file_importers[".code%-workspace"] =  function(path)
 	set_workspaceFolder(path)
 
 	local workspace = util.json_parse(path)
@@ -51,6 +80,24 @@ M.import_workspace = function(path)
 	import_folders(workspace.folders)
 	import_launch_config(workspace.launch)
 	import_tasks(workspace.tasks)
+end
+
+
+constants.file_importers["tasks.json"] =  function(path)
+	set_workspaceFolder(path)
+
+	local workspace = util.json_parse(path)
+
+	import_tasks(workspace)
+end
+
+
+constants.file_importers["launch.json"] =  function(path)
+	set_workspaceFolder(path)
+
+	local workspace = util.json_parse(path)
+
+	import_launch_config(workspace)
 end
 
 return M
