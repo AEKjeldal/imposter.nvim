@@ -234,6 +234,7 @@ M.run_build = function(opts)
 								end,
 					 data = util.filter(build_filter, tasks) or {},
 					 display = 'label' }
+
 	event_handler.emit_buffer_event(event_handler.bufferEvents.SelectBox,content)
 end
 

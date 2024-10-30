@@ -84,12 +84,50 @@ describe("format_config",function()
 
 end)
 
+describe("set_defaults",function()
+	local tasks = require('imposter.tasks')
+	local builtin_task = { { label = "builtin",
+							 type = "shell",
+							command = "echo Building the project...",
+							group = {
+								kind = "build",
+								isDefault = true
+								},
+							problemMatcher = {}
+							}}
+
+
+	before_each(function()
+		-- Reload to prevent test cross contamonation
+		package.loaded['imposter.constants'] = nil
+		package.loaded['imposter.util']		 = nil
+		package.loaded['imposter.tasks']     = nil
+		util		= require("imposter.util")
+        constants	= require("imposter.constants")
+        tasks   	= require("imposter.tasks")
+	end)
+
+	it("adds builtins to avaliable tasks",function()
+		local setup = { tasks = builtin_task }
+		util.set_defaults(setup)
+		assert.same(builtin_task,constants.builtin_tasks)
+
+	end)
+
+	it("makes default tasks available in tasks",function()
+		local setup = { tasks = builtin_task }
+		util.set_defaults(setup)
+		assert.same(setup.tasks,tasks.get_task("builtin"))
+	end)
+
+end)
 describe("copy",function()
 	it("copies the table",function()
 		local exp = {test =1, test2='test'}
 		local result = util.copy(exp)
 		assert.same(exp,result)
 	end)
+
 	it("handles tables",function()
 		local exp = {test =1, test2='test', table={test3=123}}
 		local result = util.copy(exp)
@@ -128,9 +166,8 @@ describe("filter filters table",function()
 		local inputTable = {"test", "PickThis", 'another_elem', 123  }
 
 		local exp = {"PickThis"}
-		assert.are.same(exp,util.filter(filter,inputTable))
+		assert.same(exp,util.filter(filter,inputTable))
 	end)
-
 
 	it("Matches objects",function()
 
