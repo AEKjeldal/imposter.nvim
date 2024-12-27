@@ -26,10 +26,8 @@ M.show_dropdown = function(args)
 				local selection = action_state.get_selected_entry()
 
 				local result = utils.filter(function(tbl)
-
 					return tbl[display] == selection[1]
-				end,args.data )
-
+				end, args.data )
 				args.on_select(result)
 			end)
 			return true

@@ -14,6 +14,7 @@ M.import_workspace = importer.import_workspace
 
 M.run_task    = tasks.run_task
 M.toggle_view = ui.toggleView
+M.pick_buffer = ui.pick_buffer
 M.show        = ui.show_output_window
 
 M.toggle_term = function() ui.toggleView() end
