@@ -26,7 +26,7 @@ local kill_buffer = function(bufNo)
 
 	if old_buffer and vim.api.nvim_buf_is_valid(old_buffer)  then
 		-- kill old buffer
-		vim.api.nvim_buf_delete(old_buffer,{ force= true})
+		vim.api.nvim_buf_delete(old_buffer,{ force=true, unload=false})
 	end
 
 end
