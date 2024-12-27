@@ -6,6 +6,7 @@ local M = {}
 M.bufferEvents = {
 	RequestBuffer  = "request_buffer",
 	BufferReplaced = "buffer_replaced",
+	BufferKill     = "buffer_kill",
 	BufferShow     = "buffer_show",
 	SelectBox	   = "select_box"
 }

@@ -85,6 +85,9 @@ M.update_buffer = function(bufferNo)
 end
 
 
+
+
+
 M.pick_buffer = function()
 
 	local live_buffers  = { }
@@ -93,7 +96,6 @@ M.pick_buffer = function()
 		local data =  { name  = name,
 				     	bufno	 = bufno ,
 			            callback = function(data) 
-
 							M.show_buffer(name)
 						end }
 
@@ -102,8 +104,7 @@ M.pick_buffer = function()
 
 	local create_file = {name = "Create New Buffer",
 						 callback = function(data)
-							 local bname = vim.fn.input("Buffer Name: ")
-							vim.notify("Creating Buffer: "..bname)
+							local bname = vim.fn.input("Buffer Name: ") or "terminal"
 							event_handler.emit_buffer_event(event_handler.bufferEvents.RequestBuffer,
 															{bufferType="terminal",name=bname})
 							 M.show_buffer(bname)
@@ -118,6 +119,31 @@ M.pick_buffer = function()
 
 end
 
+M.delete_buffer = function()
+	local live_buffers  = { }
+
+	for name,bufno in pairs(constants.buffers) do
+		local data =  { name  = name,
+				     	bufn  = bufno ,
+			            callback = function(data) 
+							event_handler.emit_buffer_event(event_handler.bufferEvents.BufferKill,
+															{bufName=data.name})
+						end }
+
+		table.insert(live_buffers,data)
+	end
+
+	pickers.selectBox({display = "name" ,data = live_buffers , 
+					   on_select = function(data)
+						   local callback = data[1].callback
+						   callback(data[1])
+					   end 
+					 })
+end
+
+
+
+
 
 --- below here we connect the eventhandlers
 event_handler.subscribe_buffer_event(event_handler.bufferEvents.BufferReplaced,function(data)
@@ -126,6 +152,7 @@ event_handler.subscribe_buffer_event(event_handler.bufferEvents.BufferReplaced,f
 end)
 
 event_handler.subscribe_buffer_event(event_handler.bufferEvents.BufferShow,
+
 function(i)
 
 	local type	       = i.type
@@ -143,4 +170,3 @@ event_handler.subscribe_buffer_event(event_handler.bufferEvents.SelectBox, funct
 end)
 
 return M
-

@@ -241,11 +241,15 @@ M.run_build = function(opts)
 end
 
 event_handler.subscribe_buffer_event(event_handler.bufferEvents.RequestBuffer,
-		function(request)
-			if request.bufferType == 'terminal' then
-				open_terminal(request.name) -- expand this to take a buffername
-			end 
-		end)
+function(request)
+	if request.bufferType == 'terminal' then
+		open_terminal(request.name) -- expand this to take a buffername
+	end 
+end)
 
+event_handler.subscribe_buffer_event(event_handler.bufferEvents.BufferKill,
+	function(request)
+		buffers.kill_buffer(request.bufName)
+	end)
 return M
 
