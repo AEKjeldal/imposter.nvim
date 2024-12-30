@@ -48,6 +48,7 @@ M.show_buffer = function(bufferType,goto_window)
 		if not output_window_visible() then
 			M.show_output_window(goto_window)
 		end
+
 		vim.api.nvim_win_set_buf(M.outputWindow,bufferNo)
 	end
 end
@@ -82,20 +83,84 @@ M.update_buffer = function(bufferNo)
 
 	vim.notify("cold not set buffer!")
 end
+
+
+
+
+
+M.pick_buffer = function()
+
+	local live_buffers  = { }
+
+	for name,bufno in pairs(constants.buffers) do
+		local data =  { name  = name,
+				     	bufno	 = bufno ,
+			            callback = function(data) 
+							M.show_buffer(name)
+						end }
+
+		table.insert(live_buffers,data)
+	end
+
+	local create_file = {name = "Create New Buffer",
+						 callback = function(data)
+							local bname = vim.fn.input("Buffer Name: ") or "terminal"
+							event_handler.emit_buffer_event(event_handler.bufferEvents.RequestBuffer,
+															{bufferType="terminal",name=bname})
+							 M.show_buffer(bname)
+						 end}
+	table.insert(live_buffers,create_file)
+
+	pickers.selectBox({display = "name" ,data = live_buffers , 
+					   on_select = function(data)
+						   local callback = data[1].callback
+						   callback(data[1])
+					   end })
+
+end
+
+M.delete_buffer = function()
+	local live_buffers  = { }
+
+	for name,bufno in pairs(constants.buffers) do
+		local data =  { name  = name,
+				     	bufn  = bufno ,
+			            callback = function(data) 
+							event_handler.emit_buffer_event(event_handler.bufferEvents.BufferKill,
+															{bufName=data.name})
+						end }
+
+		table.insert(live_buffers,data)
+	end
+
+	pickers.selectBox({display = "name" ,data = live_buffers , 
+					   on_select = function(data)
+						   local callback = data[1].callback
+						   callback(data[1])
+					   end 
+					 })
+end
+
+
+
+
+
 --- below here we connect the eventhandlers
 event_handler.subscribe_buffer_event(event_handler.bufferEvents.BufferReplaced,function(data)
 	local bufNo = constants.buffers[data.bufName]
 	M.update_buffer(bufNo)
 end)
+
 event_handler.subscribe_buffer_event(event_handler.bufferEvents.BufferShow,
-	function(i)
 
-		local type	       = i.type
-		local presentation = i.presentation
+function(i)
 
-		if presentation.reveal == 'always' then
-			M.show_buffer(type)
-		end
+	local type	       = i.type
+	local presentation = i.presentation
+
+	if presentation.reveal == 'always' then
+		M.show_buffer(type)
+	end
 end)
 
 event_handler.subscribe_buffer_event(event_handler.bufferEvents.SelectBox, function(data)
@@ -104,6 +169,4 @@ event_handler.subscribe_buffer_event(event_handler.bufferEvents.SelectBox, funct
 	end
 end)
 
-
 return M
-
