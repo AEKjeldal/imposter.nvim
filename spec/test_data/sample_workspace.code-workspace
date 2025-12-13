@@ -57,7 +57,7 @@
 
     // Build tasks
     "tasks" : {
-        "tasks: [
+        "tasks": [
             {
                 label: 'build project1',
                 type: 'shell',
