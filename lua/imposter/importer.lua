@@ -77,9 +77,9 @@ constants.file_importers[".code%-workspace"] =  function(path)
 
 	local workspace = util.json_parse(path)
 
-	import_folders(workspace.folders)
-	import_launch_config(workspace.launch)
-	import_tasks(workspace.tasks)
+	import_folders(workspace.folders or {})
+	import_launch_config(workspace.launch or {})
+	import_tasks(workspace.tasks or {})
 end
 
 
