@@ -56,13 +56,14 @@
     },
 
     // Build tasks
-    tasks: [
-        {
-            label: 'build project1',
-            type: 'shell',
-            command: 'g++',
-            args: [
-                '-g',
+    "tasks" : {
+        "tasks": [
+            {
+                label: 'build project1',
+                type: 'shell',
+                command: 'g++',
+                args: [
+                    '-g',
                 'src/*.cpp',
                 '-o',
                 'build/${workspaceFolderBasename}'
@@ -107,6 +108,8 @@
                 cwd: '${workspaceFolder}/project2'
             }
         }
-    ]
+
+    ]}
+
 }
 

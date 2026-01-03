@@ -37,7 +37,7 @@ local function import_launch_config(launch)
 end
 
 local function import_tasks(tasks)
-	constants.tasks = tasks
+	constants.tasks = tasks.tasks
 	-- constants.tasks = util.format_config(tasks)
 end
 
