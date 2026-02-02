@@ -37,6 +37,8 @@ local function import_launch_config(launch)
 end
 
 local function import_tasks(tasks)
+    tasks = tasks or {}
+
 	constants.tasks = tasks.tasks
 	-- constants.tasks = util.format_config(tasks)
 end
@@ -59,8 +61,6 @@ M.import_workspace = function(path)
 			return
 		end
 	end
-	
-	
 	-- set_workspaceFolder(path)
 	--
 	-- local workspace = util.json_parse(path)
@@ -77,9 +77,13 @@ constants.file_importers[".code%-workspace"] =  function(path)
 
 	local workspace = util.json_parse(path)
 
-	import_folders(workspace.folders)
-	import_launch_config(workspace.launch)
-	import_tasks(workspace.tasks)
+    local folders   = workspace.folders or {}
+    local launch    = workspace.launch or {}
+    local tasks     = workspace.tasks or {}
+
+	import_folders(folders)
+	import_launch_config(launch)
+	import_tasks(tasks)
 end
 
 
