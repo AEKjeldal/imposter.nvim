@@ -7,8 +7,8 @@ local event_handler = require('imposter.event_handler')
 
 
 local function dap_running()
-	local status = dap.status()
-	return not (status == nil or status == "") 
+	local sessions = dap.sessions()
+	return not (sessions == nil or next(sessions) == nil)
 end
 
 
