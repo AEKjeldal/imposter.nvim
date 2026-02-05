@@ -1,0 +1,80 @@
+
+{
+    "folders": [
+        { "path": "../gpos/apps/ops" },
+        { "path": "../gpos/apps/webserver" },
+        { "path": "../gpos/apps/tools" },
+        { "path": "../gpos/apps/db" },
+        { "path": "../../pc_rpc" },
+        { "path": "../../ptools" },
+        { "path": "../gpos/docker" }
+    ],
+
+    "settings": {
+        "files.exclude": {}
+    },
+
+    "launch": {
+        "configurations": [
+            {
+                "name": "opsserver",
+                "type": "python",
+                "request": "launch",
+                "console": "integratedTerminal",
+                "cwd": "${workspaceFolder:ops}",
+                "program": "${workspaceFolder:ops}/ops_application.py",
+                "args": ["-u", "-B"]
+            }
+            // Maybe include docker launch config vs local config?
+        ]
+    },
+
+    // ---------------------------
+    // Template tasks for this workspace
+    // ---------------------------
+    "tasks": {
+        "tasks": [
+            
+            {
+                "label": "StartWebserver",
+                "type": "process",
+                "command": "python",
+                "args": ["${workspaceFolder:webserver}/web_tornado_ws_server.py","-u","-B"],
+                "options": {
+                    "cwd": "${workspaceFolder}"
+                },
+                "group": {
+                    "kind": "build",
+                    "isDefault": true
+                },
+                "presentation": {
+                    "reveal": "always",
+                    "panel": "dedicated",
+                    "clear": true
+                }
+            },
+            {
+                "label": "SetupFtp",
+                "type": "shell",
+                "command": "cmd",
+                "args": ["/c","start_ftp.cmd"],
+                "options": {
+                    "cwd": "${workspaceFolder:ops}../../../"
+                },
+                // Use the built-in Python problem matcher for basic tracebacks
+                // Show under the "build" group to make it easy to run with default shortcut
+                "group": {
+                    "kind": "build",
+                    "isDefault": true
+                },
+                "presentation": {
+                    "reveal": "always",
+                    "panel": "dedicated",
+                    "clear": true
+                }
+            },
+            
+        ],
+    }
+}
+

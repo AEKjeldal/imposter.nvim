@@ -26,6 +26,23 @@ local replacements = {workspaceFolder =  function() return constants.workspaceFo
 
 local M = {}
 
+
+M.is_git_path = function (path)
+    path = path or vim.fn.getcwd()
+    local cmd = {'git', 'rev-parse','--is-inside-work-tree'}
+    local opts = {cwd=path}
+    return vim.system(cmd,opts):wait().code == 0
+end
+
+M.git_get_top_level = function(path)
+    path = path or vim.fn.getcwd()
+    if(M.is_git_path(path)) then
+        local cmd = {'git', 'rev-parse','--show-superproject-working-tree', '--show-toplevel'}
+        local opts = {cwd=path}
+        return vim.system(cmd,opts):wait().stdout
+    end
+end
+
 M.set_defaults = function(opts)
 	M.update(constants.root_indicators,opts.root_indicators or {})
 	M.update(constants.builtin_tasks,opts.tasks or {})
