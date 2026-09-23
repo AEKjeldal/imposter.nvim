@@ -35,4 +35,17 @@ M.build = function(opts)
 end
 
 M.constants = require('imposter.constants')
+
+
+
+vim.api.nvim_create_user_command('ImposterTest',function() M.test() end,{})
+vim.api.nvim_create_user_command('ImposterRerunTest',function() M.test({rerun=true}) end,{})
+-- vim.api.nvim_create_user_command('ImposterRunTask',function() M.run_task() end,{})
+vim.api.nvim_create_user_command('ImposterToggleTerm',function() M.toggle_term() end,{})
+vim.api.nvim_create_user_command('ImposterBufDelete',M.delete_buffer,{})
+vim.api.nvim_create_user_command('ImposterBufPick',M.pick_buffer,{})
+vim.api.nvim_create_user_command('ImposterImportWorkspace',M.import_workspace,{})
+
+
 return M
+

@@ -21,11 +21,20 @@ local replacements = {workspaceFolder =  function() return constants.workspaceFo
 					  userHome = function() return vim.fn.expand('~/') end,
 					  ['/'] = function() return M.sep() end,
 					  cwd = function() return vim.fn.getcwd end,
-					  workspaceFolderBasename =  function() return constants.workspaceFolderBasename end
+					  workspaceFolderBasename =  function() return vim.fs.abspath(constants.workspaceFolderBasename) end
 										   }
 
 local M = {}
 
+M.replace = function(table,filter,replacement)
+    for k,v in pairs(table) do
+        if filter(v) then
+            table[k] = replacement
+            return true
+        end
+    end
+    return false
+end
 
 M.is_git_path = function (path)
     path = path or vim.fn.getcwd()
@@ -50,7 +59,7 @@ M.set_defaults = function(opts)
 end
 
 
-M.update =function(table,replacements)
+M.update = function(table,replacements)
 	for k,v in pairs(replacements) do
 		table[k] = v
 	end
@@ -131,7 +140,8 @@ M.root = function()
 end
 
 local function format_str(input_str)
-	-- local re = vim.regex("\\${\\(workspaceFolder\\|workspaceFolderBasename\\|file\\|userHome\\)\\(:\\w\\+\\)*}")
+
+    -- Scan for replacements within string.
 	local re = vim.regex("\\${\\(\\w\\+\\)\\(:\\w\\+\\)*}")
 	local st,en = re:match_str(input_str)
 
@@ -151,16 +161,29 @@ local function format_str(input_str)
 end
 
 M.format_config = function(configuration)
+    -- Scan configuration for strings
+    -- strings needs a replacement 
+    -- example ${workspaceFolder} -> /path/to/workspaceFolder
+    -- configuration is allowed to be the following types:
+    --  table
+    --  string
+    --  function ´
 	local result = {}
+
+
 	for idx,conf in pairs(configuration) do
 		if type(conf) == 'table' then
 			local t = M.format_config(conf)
 			conf = t
 		elseif type(conf) == 'string' then
 			conf = format_str(conf)
+		elseif type(conf) == 'function' then
+            -- if we have a function here we format output!
+            conf = format_str(conf())
 		end
 		result[idx] = conf
 	end
+
 	return result
 end
 
@@ -171,6 +194,15 @@ M.split_str = function(input,sep)
 	end
 
 	return result
+end
+M.path_sep = function()
+    
+	if os.getenv('OS') == 'Windows_NT' then
+		return ';'
+	else
+		return ':'
+	end
+
 end
 
 M.sep = function()

@@ -83,6 +83,9 @@ M.LoadWorkspace = function(base_path)
 	local workspaces = M.find_workspaces(base_path)
 
 	local data = { on_select = function(workspace)
+        if workspace[1] == nil then
+            return
+        end
 		importer.import_workspace(workspace[1].path)
 	end,
 	data = workspaces, display='filename' }

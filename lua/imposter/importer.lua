@@ -32,14 +32,14 @@ local function import_folders(paths)
 end
 
 local function import_launch_config(launch)
-	constants.launch_config = launch.configurations
+	constants.launch_config = launch.configurations or {}
 	-- constants.launch_config = util.format_config(launch.configurations)
 end
 
 local function import_tasks(tasks)
     tasks = tasks or {}
 
-	constants.tasks = tasks.tasks
+	constants.tasks = tasks.tasks or {}
 	-- constants.tasks = util.format_config(tasks)
 end
 
@@ -61,13 +61,6 @@ M.import_workspace = function(path)
 			return
 		end
 	end
-	-- set_workspaceFolder(path)
-	--
-	-- local workspace = util.json_parse(path)
-	--
-	-- import_folders(workspace.folders)
-	-- import_launch_config(workspace.launch)
-	-- import_tasks(workspace.tasks)
 end
 
 

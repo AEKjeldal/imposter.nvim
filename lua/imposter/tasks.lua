@@ -39,7 +39,7 @@ local function open_terminal(termname)
 end
 
 
-local function format_task (task)
+local function format_task(task)
 
 	local os_settings = task[util.os()] or {}
 
@@ -85,8 +85,8 @@ local function run_in_term(command,opts)
 end
 
 
---todo: this should be in utils
-
+--Todo: this should be in utils
+--Todo add loop count here to prevent circular recursion ( circular dependsOn )
 local function compose_task_queue(taskName,queue)
 	queue = queue or {}
 	table.insert(queue,1,taskName)
@@ -200,8 +200,13 @@ M.run_test = function(opts)
 	end
 
 	-- This should be handled elsewhere!
-	local tasks = util.copy(constants.builtin_tasks)
-	util.update(tasks,constants.tasks)
+	local tasks = util.copy(constants.builtin_tasks or {})
+
+    vim.notify('Task: \n'..vim.inspect(tasks))
+
+    -- Todo: this stems from a bug in the importer causing tasks to be nil
+	util.update(tasks,constants.tasks or {})
+    
 
 	local content = {on_select = function(tbl)
 									local label = tbl[1].label

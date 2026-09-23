@@ -36,7 +36,6 @@ M.continue = function()
 	-- if nothing is running we want to select and start a config
 	-- otherwise we dap.continue()
 
-	vim.notify("Dap status: "..vim.inspect(dap.status()))
 
 	if dap_running() then
 		dap.continue()
@@ -63,11 +62,13 @@ M.restart = function()
 	if dap_running() then
 		dap.run_last()
 	else
-		dap.restart()
+		dap.run_last()
 	end
 
 end
 
 
+vim.api.nvim_create_user_command('ImposterDapRun',function() M.continue() end,{})
+vim.api.nvim_create_user_command('ImposterDapRestart',function() M.restart() end,{})
 
 return M

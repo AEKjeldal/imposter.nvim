@@ -35,8 +35,6 @@ M.kill_buffer = function(bufName)
 	-- kill and remove bufName from active buffers
 	local buf_no = constants.buffers[bufName] 
 	kill_buffer(buf_no)
-
-	vim.notify(bufName)
 	constants.buffers[bufName] = nil
 end
 

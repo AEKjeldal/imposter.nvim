@@ -84,10 +84,6 @@ M.update_buffer = function(bufferNo)
 	vim.notify("cold not set buffer!")
 end
 
-
-
-
-
 M.pick_buffer = function()
 
 	local live_buffers  = { }
@@ -137,13 +133,9 @@ M.delete_buffer = function()
 					   on_select = function(data)
 						   local callback = data[1].callback
 						   callback(data[1])
-					   end 
+					   end
 					 })
 end
-
-
-
-
 
 --- below here we connect the eventhandlers
 event_handler.subscribe_buffer_event(event_handler.bufferEvents.BufferReplaced,function(data)
